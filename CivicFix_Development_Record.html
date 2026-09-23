@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CivicFix — Development Record</title>
+<style>
+  :root{
+    --bg:#f5f7fb;
+    --surface:#ffffff;
+    --surface-2:#f8fafc;
+    --ink:#0f172a;
+    --muted:#64748b;
+    --line:#e2e8f0;
+    --navy:#0b1530;
+    --navy-2:#132348;
+    --accent:#2563eb;
+    --accent-soft:#eaf1ff;
+    --green:#14804a;
+    --green-soft:#eaf7f0;
+    --amber:#a15c00;
+    --amber-soft:#fff5df;
+    --shadow:0 18px 50px rgba(15, 23, 42, .08);
+    --radius:20px;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family: Inter, "SF Pro Display", "SF Pro Text", Aptos, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height:1.6;
+  }
+
+  a{color:inherit;text-decoration:none}
+  button{font:inherit}
+
+  .site{
+    min-height:100vh;
+  }
+
+  .topbar{
+    position:sticky;
+    top:0;
+    z-index:20;
+    backdrop-filter:blur(16px);
+    background:rgba(245,247,251,.88);
+    border-bottom:1px solid rgba(226,232,240,.85);
+  }
+
+  .topbar-inner{
+    max-width:1220px;
+    margin:0 auto;
+    padding:16px 24px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:24px;
+  }
+
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    min-width:0;
+  }
+
+  .brand-mark{
+    width:38px;
+    height:38px;
+    border-radius:12px;
+    background:linear-gradient(145deg,var(--navy),var(--accent));
+    display:grid;
+    place-items:center;
+    color:white;
+    font-weight:800;
+    letter-spacing:-.04em;
+    box-shadow:0 10px 24px rgba(37,99,235,.2);
+  }
+
+  .brand-copy{
+    display:flex;
+    flex-direction:column;
+    line-height:1.15;
+  }
+
+  .brand-copy strong{
+    font-size:15px;
+    letter-spacing:-.02em;
+  }
+
+  .brand-copy span{
+    font-size:12px;
+    color:var(--muted);
+    margin-top:3px;
+  }
+
+  .nav{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+  }
+
+  .nav a{
+    font-size:13px;
+    color:#475569;
+    padding:8px 11px;
+    border-radius:10px;
+  }
+
+  .nav a:hover{
+    background:#fff;
+    color:var(--ink);
+  }
+
+  .wrap{
+    max-width:1220px;
+    margin:0 auto;
+    padding:46px 24px 80px;
+  }
+
+  .hero{
+    background:
+      radial-gradient(circle at 80% 20%, rgba(59,130,246,.18), transparent 33%),
+      linear-gradient(135deg,var(--navy) 0%, var(--navy-2) 65%, #17346f 100%);
+    color:white;
+    border-radius:30px;
+    padding:46px;
+    box-shadow:var(--shadow);
+    overflow:hidden;
+    position:relative;
+  }
+
+  .hero-grid{
+    display:grid;
+    grid-template-columns:minmax(0,1.45fr) minmax(280px,.75fr);
+    gap:36px;
+    align-items:end;
+  }
+
+  .eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-size:12px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    color:#c8d8ff;
+    margin-bottom:14px;
+  }
+
+  .eyebrow-dot{
+    width:8px;height:8px;border-radius:50%;
+    background:#6ee7b7;
+    box-shadow:0 0 0 5px rgba(110,231,183,.12);
+  }
+
+  h1{
+    margin:0;
+    font-size:clamp(40px,7vw,72px);
+    line-height:.96;
+    letter-spacing:-.055em;
+    max-width:760px;
+  }
+
+  .hero p{
+    color:#d8e2f8;
+    max-width:760px;
+    font-size:17px;
+    margin:22px 0 0;
+  }
+
+  .hero-note{
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.13);
+    border-radius:20px;
+    padding:22px;
+  }
+
+  .hero-note .label{
+    color:#aac0ef;
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:.11em;
+    font-weight:700;
+  }
+
+  .hero-note .value{
+    font-size:19px;
+    font-weight:700;
+    margin-top:7px;
+    line-height:1.35;
+  }
+
+  .hero-note .sub{
+    font-size:13px;
+    color:#c9d7f3;
+    margin-top:9px;
+  }
+
+  .stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:16px;
+    margin:22px 0 0;
+  }
+
+  .stat{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:21px 22px;
+  }
+
+  .stat .k{
+    font-size:12px;
+    color:var(--muted);
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+  }
+
+  .stat .v{
+    margin-top:7px;
+    font-size:29px;
+    font-weight:800;
+    letter-spacing:-.04em;
+  }
+
+  .stat .s{
+    color:var(--muted);
+    font-size:12px;
+    margin-top:3px;
+  }
+
+  .section{
+    margin-top:56px;
+  }
+
+  .section-head{
+    display:flex;
+    align-items:end;
+    justify-content:space-between;
+    gap:24px;
+    margin-bottom:18px;
+  }
+
+  .section-head h2{
+    margin:0;
+    font-size:29px;
+    letter-spacing:-.035em;
+  }
+
+  .section-head p{
+    margin:0;
+    color:var(--muted);
+    max-width:630px;
+    font-size:14px;
+  }
+
+  .panel{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:0 8px 30px rgba(15,23,42,.035);
+  }
+
+  .chart-panel{
+    padding:26px 26px 22px;
+  }
+
+  .chart-title{
+    display:flex;
+    justify-content:space-between;
+    gap:24px;
+    align-items:start;
+  }
+
+  .chart-title h3{
+    margin:0;
+    font-size:18px;
+  }
+
+  .chart-title span{
+    color:var(--muted);
+    font-size:12px;
+  }
+
+  .bars{
+    height:260px;
+    display:grid;
+    grid-template-columns:repeat(9,minmax(34px,1fr));
+    align-items:end;
+    gap:14px;
+    margin-top:28px;
+    border-bottom:1px solid var(--line);
+    position:relative;
+    padding:0 6px;
+  }
+
+  .bar-col{
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-end;
+    gap:9px;
+    min-width:0;
+  }
+
+  .bar-wrap{
+    height:210px;
+    width:100%;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+  }
+
+  .bar{
+    width:min(48px,70%);
+    min-width:24px;
+    border-radius:10px 10px 3px 3px;
+    background:linear-gradient(180deg,#3b82f6 0%,#2563eb 100%);
+    box-shadow:0 8px 18px rgba(37,99,235,.17);
+    position:relative;
+  }
+
+  .bar::before{
+    content:attr(data-hours) "h";
+    position:absolute;
+    top:-25px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:11px;
+    font-weight:700;
+    color:#334155;
+    white-space:nowrap;
+  }
+
+  .bar-label{
+    font-size:11px;
+    color:var(--muted);
+    text-align:center;
+    white-space:nowrap;
+  }
+
+  .journal{
+    display:grid;
+    grid-template-columns:230px minmax(0,1fr);
+    gap:26px;
+  }
+
+  .journal-index{
+    position:sticky;
+    top:92px;
+    align-self:start;
+    padding:18px;
+  }
+
+  .journal-index .index-title{
+    font-size:12px;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:.1em;
+    color:var(--muted);
+    margin:2px 7px 10px;
+  }
+
+  .journal-index a{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    padding:10px 10px;
+    border-radius:10px;
+    font-size:13px;
+    color:#475569;
+  }
+
+  .journal-index a:hover{
+    background:var(--surface-2);
+    color:var(--ink);
+  }
+
+  .journal-index .hours{
+    font-size:11px;
+    color:#94a3b8;
+  }
+
+  .entries{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+
+  .entry{
+    padding:0;
+    overflow:hidden;
+  }
+
+  .entry-top{
+    display:grid;
+    grid-template-columns:155px minmax(0,1fr);
+    gap:22px;
+    padding:26px 28px 20px;
+    border-bottom:1px solid var(--line);
+  }
+
+  .date-block{
+    border-right:1px solid var(--line);
+    padding-right:22px;
+  }
+
+  .date-block .date{
+    font-size:16px;
+    font-weight:800;
+    letter-spacing:-.025em;
+  }
+
+  .date-block .time{
+    margin-top:8px;
+    display:inline-flex;
+    padding:5px 9px;
+    border-radius:999px;
+    background:var(--accent-soft);
+    color:#1d4ed8;
+    font-size:11px;
+    font-weight:800;
+  }
+
+  .entry-title h3{
+    margin:0;
+    font-size:20px;
+    letter-spacing:-.025em;
+  }
+
+  .entry-title .summary{
+    color:var(--muted);
+    font-size:14px;
+    margin-top:6px;
+  }
+
+  .entry-body{
+    padding:23px 28px 28px;
+    display:grid;
+    grid-template-columns:minmax(0,1.65fr) minmax(230px,.75fr);
+    gap:28px;
+  }
+
+  .entry-body p{
+    margin:0 0 15px;
+    color:#334155;
+    font-size:14px;
+  }
+
+  .entry-body ul{
+    margin:0;
+    padding-left:18px;
+    color:#334155;
+    font-size:14px;
+  }
+
+  .entry-body li+li{margin-top:6px}
+
+  .outcome{
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:18px;
+    height:max-content;
+  }
+
+  .outcome h4{
+    margin:0 0 10px;
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:.09em;
+    color:var(--muted);
+  }
+
+  .outcome .result{
+    font-size:14px;
+    color:#334155;
+    font-weight:600;
+  }
+
+  .next{
+    margin-top:14px;
+    padding-top:14px;
+    border-top:1px solid var(--line);
+  }
+
+  .next span{
+    display:block;
+    color:var(--muted);
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    font-weight:800;
+    margin-bottom:5px;
+  }
+
+  .next p{
+    margin:0;
+    font-size:13px;
+  }
+
+  .milestone-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+  }
+
+  .milestone{
+    padding:21px;
+  }
+
+  .milestone .num{
+    width:32px;height:32px;border-radius:10px;
+    display:grid;place-items:center;
+    background:#eef2ff;
+    color:#3730a3;
+    font-weight:800;
+    font-size:12px;
+  }
+
+  .milestone h3{
+    margin:14px 0 7px;
+    font-size:16px;
+  }
+
+  .milestone p{
+    margin:0;
+    color:var(--muted);
+    font-size:13px;
+  }
+
+  .status{
+    display:inline-flex;
+    margin-top:15px;
+    padding:5px 9px;
+    border-radius:999px;
+    font-size:11px;
+    font-weight:800;
+  }
+
+  .complete{background:var(--green-soft);color:var(--green)}
+  .progress{background:var(--amber-soft);color:var(--amber)}
+  .planned{background:#eef2ff;color:#4338ca}
+
+  .architecture{
+    padding:28px;
+  }
+
+  .flow{
+    display:grid;
+    grid-template-columns:repeat(5,minmax(0,1fr));
+    gap:12px;
+    align-items:stretch;
+  }
+
+  .flow-card{
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:18px;
+    background:var(--surface-2);
+    min-height:138px;
+  }
+
+  .flow-card .step{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.09em;
+    color:var(--muted);
+    font-weight:800;
+  }
+
+  .flow-card strong{
+    display:block;
+    margin-top:9px;
+    font-size:15px;
+  }
+
+  .flow-card p{
+    margin:7px 0 0;
+    color:var(--muted);
+    font-size:12px;
+    line-height:1.5;
+  }
+
+  .scope-note{
+    margin-top:16px;
+    color:var(--muted);
+    font-size:12px;
+  }
+
+  .footer{
+    margin-top:60px;
+    padding-top:24px;
+    border-top:1px solid var(--line);
+    display:flex;
+    justify-content:space-between;
+    gap:20px;
+    color:var(--muted);
+    font-size:12px;
+  }
+
+  .disclaimer{
+    background:#fffdf7;
+    border:1px solid #f6e6b7;
+    color:#7a5a0f;
+    padding:13px 15px;
+    border-radius:12px;
+    font-size:12px;
+    margin-top:18px;
+  }
+
+  @media(max-width:980px){
+    .hero-grid{grid-template-columns:1fr}
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .journal{grid-template-columns:1fr}
+    .journal-index{position:static;display:none}
+    .milestone-grid{grid-template-columns:repeat(2,1fr)}
+    .flow{grid-template-columns:1fr 1fr}
+  }
+
+  @media(max-width:680px){
+    .topbar-inner{padding:13px 16px}
+    .nav{display:none}
+    .wrap{padding:24px 16px 56px}
+    .hero{padding:30px 24px;border-radius:22px}
+    .stats{grid-template-columns:1fr 1fr;gap:10px}
+    .stat{padding:16px}
+    .entry-top{grid-template-columns:1fr}
+    .date-block{border-right:0;border-bottom:1px solid var(--line);padding:0 0 14px}
+    .entry-body{grid-template-columns:1fr;padding:20px}
+    .milestone-grid{grid-template-columns:1fr}
+    .flow{grid-template-columns:1fr}
+    .bars{gap:6px;overflow-x:auto;grid-template-columns:repeat(9,54px);justify-content:start}
+    .section-head{align-items:start;flex-direction:column}
+    .footer{flex-direction:column}
+  }
+
+  @media print{
+    .topbar{position:static;background:white}
+    .nav{display:none}
+    body{background:white}
+    .hero,.panel,.stat{box-shadow:none}
+    .journal{grid-template-columns:1fr}
+    .journal-index{display:none}
+    .entry{break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+<div class="site">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-mark">CF</div>
+        <div class="brand-copy">
+          <strong>CivicFix</strong>
+          <span>Development record · Mercer County prototype</span>
+        </div>
+      </div>
+      <nav class="nav" aria-label="Primary">
+        <a href="#overview">Overview</a>
+        <a href="#hours">Hours</a>
+        <a href="#journal">Daily journal</a>
+        <a href="#milestones">Milestones</a>
+        <a href="#architecture">Architecture</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero" id="overview">
+      <div class="hero-grid">
+        <div>
+          <div class="eyebrow"><span class="eyebrow-dot"></span> Active prototype</div>
+          <h1>CivicFix development record.</h1>
+          <p>
+            A professional build log for the Mercer County civic-reporting prototype:
+            map-based location selection, photo/video evidence, AI-assisted issue understanding,
+            New Jersey GIS jurisdiction lookup, and structured report generation.
+          </p>
+        </div>
+        <aside class="hero-note">
+          <div class="label">Current focus</div>
+          <div class="value">Coordinates → exact road segment → jurisdiction</div>
+          <div class="sub">Next: build the mobile map experience with current location and manual pin placement.</div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="stats" aria-label="Project summary">
+      <div class="stat">
+        <div class="k">Time worked</div>
+        <div class="v">12.25h</div>
+        <div class="s">Across recorded development days</div>
+      </div>
+      <div class="stat">
+        <div class="k">Workdays documented</div>
+        <div class="v">9</div>
+        <div class="s">Every recovered project workday</div>
+      </div>
+      <div class="stat">
+        <div class="k">Prototype scope</div>
+        <div class="v" style="font-size:22px">Mercer County</div>
+        <div class="s">Mobile-first, web-capable architecture</div>
+      </div>
+      <div class="stat">
+        <div class="k">Core status</div>
+        <div class="v" style="font-size:22px">GIS connected</div>
+        <div class="s">Road jurisdiction lookup working</div>
+      </div>
+    </section>
+
+    <div class="disclaimer">
+      Time-worked values are reconstructed estimates from project conversations and development activity, not stopwatch measurements.
+      The journal dates and accomplishments reflect the recovered project history.
+    </div>
+
+    <section class="section" id="hours">
+      <div class="section-head">
+        <div>
+          <h2>Hours worked</h2>
+          <p>One metric only: time invested on each recorded CivicFix development day.</p>
+        </div>
+      </div>
+
+      <div class="panel chart-panel">
+        <div class="chart-title">
+          <div>
+            <h3>Development time by workday</h3>
+            <span>12.25 total estimated hours</span>
+          </div>
+        </div>
+        <div class="bars" aria-label="Bar chart of hours worked by date">
+          <div class="bar-col"><div class="bar-wrap"><div class="bar" data-hours="1.5" style="height:63%"></div></div><div class="bar-label">Aug 17</div></div>
+          <div class="bar-col"><div class="bar-wrap"><div class="bar" data-hours="1.25" style="height:53%"></div></div><div class="bar-label">Aug 18</div></div>
+          <div class="bar-col"><div class="bar-wrap"><div class="bar" data-hours="2.0" style="height:84%"></div></div><div class="bar-label">Aug 19</div></div>
+          <div class="bar-col"><div class="bar-wrap"><div class="bar" data-hours="0.75" style="height:32%"></div></div><div class="bar-label">Aug 21</div></div>
+          <div class="bar-col"><div class="bar-wrap"><div class="bar" data-hours="0.5" style="height:21%"></div></div><div class="bar-label">Aug 31</div></div>
+          <div class="bar-col"><div class="bar-wrap"><div class="bar" data-hours="0.25" style="height:11%"></div></div><div class="bar-label">Sep 3</div></div>
+          <div class="bar-col"><div class="bar-wrap"><div class="bar" data-hours="2.0" style="height:84%"></div></div><div class="bar-label">Sep 5</div></div>
+          <div class="bar-col"><div class="bar-wrap"><div class="bar" data-hours="2.25" style="height:95%"></div></div><div class="bar-label">Sep 6</div></div>
+          <div class="bar-col"><div class="bar-wrap"><div class="bar" data-hours="1.75" style="height:74%"></div></div><div class="bar-label">Sep 21</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="journal">
+      <div class="section-head">
+        <div>
+          <h2>Development journal</h2>
+          <p>Full documentation for every recovered day of work — what changed, why it mattered, the result, and the next technical step.</p>
+        </div>
+      </div>
+
+      <div class="journal">
+        <aside class="panel journal-index">
+          <div class="index-title">Workdays</div>
+          <a href="#d0817"><span>Aug 17</span><span class="hours">1.5h</span></a>
+          <a href="#d0818"><span>Aug 18</span><span class="hours">1.25h</span></a>
+          <a href="#d0819"><span>Aug 19</span><span class="hours">2.0h</span></a>
+          <a href="#d0821"><span>Aug 21</span><span class="hours">0.75h</span></a>
+          <a href="#d0831"><span>Aug 31</span><span class="hours">0.5h</span></a>
+          <a href="#d0903"><span>Sep 3</span><span class="hours">0.25h</span></a>
+          <a href="#d0905"><span>Sep 5</span><span class="hours">2.0h</span></a>
+          <a href="#d0906"><span>Sep 6</span><span class="hours">2.25h</span></a>
+          <a href="#d0921"><span>Sep 21</span><span class="hours">1.75h</span></a>
+        </aside>
+
+        <div class="entries">
+
+          <article class="panel entry" id="d0817">
+            <div class="entry-top">
+              <div class="date-block">
+                <div class="date">August 17, 2026</div>
+                <div class="time">Time worked · 1.5h</div>
+              </div>
+              <div class="entry-title">
+                <h3>Project start: Good Neighbor agent concept</h3>
+                <div class="summary">Established the original hackathon direction and the first technical environment.</div>
+              </div>
+            </div>
+            <div class="entry-body">
+              <div>
+                <p>
+                  The project began under the AWS Agents for Humans hackathon as a “Good Neighbor” concept centered on local library work.
+                  The early idea was to reduce repetitive administrative workload around programs, registrations, resource promotion, and routine resident questions.
+                </p>
+                <ul>
+                  <li>Defined the first end-to-end workflow for a community-service agent.</li>
+                  <li>Set up Python 3.12 as the project runtime.</li>
+                  <li>Installed the Strands Agents SDK and began learning how agents and tools would fit together.</li>
+                  <li>Started thinking in terms of a real task workflow instead of a chatbot-only experience.</li>
+                </ul>
+              </div>
+              <aside class="outcome">
+                <h4>Result</h4>
+                <div class="result">A working development environment and a first community-service problem space.</div>
+                <div class="next"><span>Next step</span><p>Finish AWS access and decide whether the library concept is strong enough for the project.</p></div>
+              </aside>
+            </div>
+          </article>
+
+          <article class="panel entry" id="d0818">
+            <div class="entry-top">
+              <div class="date-block">
+                <div class="date">August 18, 2026</div>
+                <div class="time">Time worked · 1.25h</div>
+              </div>
+              <div class="entry-title">
+                <h3>AWS access, authentication, and project comparison</h3>
+                <div class="summary">Prepared the cloud environment and compared stronger community-agent directions.</div>
+              </div>
+            </div>
+            <div class="entry-body">
+              <div>
+                <p>
+                  Work focused on the practical AWS setup needed for Strands and Amazon Bedrock.
+                  AWS CLI access, IAM credentials, and authentication were configured and verified so local Python code could call AWS services.
+                </p>
+                <ul>
+                  <li>Installed/configured AWS CLI and verified the account identity.</li>
+                  <li>Worked through IAM access required for Bedrock model invocation.</li>
+                  <li>Received hackathon credits and confirmed that cloud development could continue.</li>
+                  <li>Compared multiple “Good Neighbor” ideas and questioned whether the library workflow was distinctive enough.</li>
+                </ul>
+              </div>
+              <aside class="outcome">
+                <h4>Result</h4>
+                <div class="result">AWS infrastructure became usable and the project was ready for a stronger concept.</div>
+                <div class="next"><span>Next step</span><p>Select a more technically differentiated community problem.</p></div>
+              </aside>
+            </div>
+          </article>
+
+          <article class="panel entry" id="d0819">
+            <div class="entry-top">
+              <div class="date-block">
+                <div class="date">August 19, 2026</div>
+                <div class="time">Time worked · 2.0h</div>
+              </div>
+              <div class="entry-title">
+                <h3>Pivot to CivicFix</h3>
+                <div class="summary">Reframed the project around civic infrastructure reporting and government routing.</div>
+              </div>
+            </div>
+            <div class="entry-body">
+              <div>
+                <p>
+                  The project pivoted away from the library concept and became CivicFix: an assistant for residents reporting non-emergency civic problems.
+                  Mercer County was selected as the initial geographic scope so the prototype could be narrow enough to finish while still dealing with real jurisdiction complexity.
+                </p>
+                <ul>
+                  <li>Defined CivicFix’s purpose: identify problems, determine the responsible government level, prepare reports, and eventually support submission/tracking.</li>
+                  <li>Outlined separate intake, jurisdiction, routing, action, and tracking responsibilities.</li>
+                  <li>Planned for a future mobile client while keeping the backend reusable.</li>
+                  <li>Completed the Bedrock/Anthropic access process needed for the AI-agent portion.</li>
+                </ul>
+              </div>
+              <aside class="outcome">
+                <h4>Result</h4>
+                <div class="result">CivicFix became the primary project with Mercer County as the MVP scope.</div>
+                <div class="next"><span>Next step</span><p>Turn the concept into a concrete end-to-end workflow and begin the jurisdiction core.</p></div>
+              </aside>
+            </div>
+          </article>
+
+          <article class="panel entry" id="d0821">
+            <div class="entry-top">
+              <div class="date-block">
+                <div class="date">August 21, 2026</div>
+                <div class="time">Time worked · 0.75h</div>
+              </div>
+              <div class="entry-title">
+                <h3>Human-approved workflow refinement</h3>
+                <div class="summary">Clarified how CivicFix should do real work without blindly acting on a resident’s behalf.</div>
+              </div>
+            </div>
+            <div class="entry-body">
+              <div>
+                <p>
+                  The project flow was refined around a human-in-the-loop design. CivicFix should prepare the correct action and only move forward when the resident has enough information to review what will happen.
+                </p>
+                <ul>
+                  <li>Separated issue understanding from jurisdiction determination.</li>
+                  <li>Clarified that deterministic government data should be preferred over AI guesses.</li>
+                  <li>Kept government submission connectors as a later integration rather than pretending every agency exposes an API.</li>
+                </ul>
+              </div>
+              <aside class="outcome">
+                <h4>Result</h4>
+                <div class="result">A more defensible architecture: AI interprets; authoritative systems decide factual routing where possible.</div>
+                <div class="next"><span>Next step</span><p>Build the actual agent/tool pieces and prove jurisdiction routing with code.</p></div>
+              </aside>
+            </div>
+          </article>
+
+          <article class="panel entry" id="d0831">
+            <div class="entry-top">
+              <div class="date-block">
+                <div class="date">August 31, 2026</div>
+                <div class="time">Time worked · 0.5h</div>
+              </div>
+              <div class="entry-title">
+                <h3>Repository and submission-readiness review</h3>
+                <div class="summary">Checked what would be needed to make the project reproducible and presentable.</div>
+              </div>
+            </div>
+            <div class="entry-body">
+              <div>
+                <p>
+                  Work shifted briefly from implementation to project quality: repository structure, setup instructions, architecture explanation, and AI disclosure were reviewed as requirements for a credible demonstration.
+                </p>
+                <ul>
+                  <li>Reinforced the need for a public/reproducible project structure.</li>
+                  <li>Identified documentation and architecture diagrams as part of the final deliverable.</li>
+                  <li>Prioritized a functional demo over expanding the scope too quickly.</li>
+                </ul>
+              </div>
+              <aside class="outcome">
+                <h4>Result</h4>
+                <div class="result">Documentation and reproducibility became explicit project requirements.</div>
+                <div class="next"><span>Next step</span><p>Focus development time on the jurisdiction/routing core.</p></div>
+              </aside>
+            </div>
+          </article>
+
+          <article class="panel entry" id="d0903">
+            <div class="entry-top">
+              <div class="date-block">
+                <div class="date">September 3, 2026</div>
+                <div class="time">Time worked · 0.25h</div>
+              </div>
+              <div class="entry-title">
+                <h3>Scope prioritization</h3>
+                <div class="summary">Reduced near-term scope to the piece that makes CivicFix technically meaningful.</div>
+              </div>
+            </div>
+            <div class="entry-body">
+              <div>
+                <p>
+                  Development priorities were narrowed to a working Mercer County jurisdiction/routing core before investing heavily in the mobile interface.
+                  The goal was to prove that CivicFix could determine responsibility using real data.
+                </p>
+              </div>
+              <aside class="outcome">
+                <h4>Result</h4>
+                <div class="result">The next build target became the Intake Agent + Jurisdiction Agent + road lookup tool.</div>
+                <div class="next"><span>Next step</span><p>Implement the agents and a first road-maintenance lookup function.</p></div>
+              </aside>
+            </div>
+          </article>
+
+          <article class="panel entry" id="d0905">
+            <div class="entry-top">
+              <div class="date-block">
+                <div class="date">September 5, 2026</div>
+                <div class="time">Time worked · 2.0h</div>
+              </div>
+              <div class="entry-title">
+                <h3>Intake Agent, Jurisdiction Agent, and first tool</h3>
+                <div class="summary">Built the first functioning multi-part CivicFix reasoning workflow.</div>
+              </div>
+            </div>
+            <div class="entry-body">
+              <div>
+                <p>
+                  CivicFix gained working agent components. The Intake Agent classified reported non-emergency problems, while a separate Jurisdiction Agent was given a Strands tool for road-maintenance lookup.
+                  The first lookup used a small hard-coded dictionary as a teaching and integration scaffold.
+                </p>
+                <ul>
+                  <li>Created the Intake Agent with structured JSON-style issue output.</li>
+                  <li>Created <code>jurisdiction_agent.py</code>.</li>
+                  <li>Created <code>road_tools.py</code> with <code>@tool</code> and <code>lookup_road()</code>.</li>
+                  <li>Tested Route 33 successfully as state-maintained.</li>
+                  <li>Used Route 54 to expose the limitation of hard-coded road data.</li>
+                </ul>
+              </div>
+              <aside class="outcome">
+                <h4>Result</h4>
+                <div class="result">The agent could call a Python tool, but the road data needed to become real and scalable.</div>
+                <div class="next"><span>Next step</span><p>Replace the practice dictionary with an authoritative New Jersey road dataset.</p></div>
+              </aside>
+            </div>
+          </article>
+
+          <article class="panel entry" id="d0906">
+            <div class="entry-top">
+              <div class="date-block">
+                <div class="date">September 6, 2026</div>
+                <div class="time">Time worked · 2.25h</div>
+              </div>
+              <div class="entry-title">
+                <h3>Real NJ ArcGIS road data integration</h3>
+                <div class="summary">Moved from fake road ownership data to real GIS-backed jurisdiction lookup.</div>
+              </div>
+            </div>
+            <div class="entry-body">
+              <div>
+                <p>
+                  The largest technical step so far was integrating New Jersey’s ArcGIS transportation road data through Python’s <code>requests</code> package.
+                  The API response structure was explored and parsed so CivicFix could translate government road-jurisdiction codes into readable jurisdiction values.
+                </p>
+                <ul>
+                  <li>Queried the NJ transportation ArcGIS service.</li>
+                  <li>Identified <code>PRIMENAME</code> as the road name field and <code>JURISDICTN</code> as the jurisdiction field.</li>
+                  <li>Learned and implemented JSON traversal through <code>features → [0] → attributes → JURISDICTN</code>.</li>
+                  <li>Mapped <code>S → state</code>, <code>C → county</code>, and <code>M → municipal</code>.</li>
+                  <li>Tested state, county, and municipal road examples.</li>
+                  <li>Compared exact searches with broader <code>LIKE</code> searches and saw why loose road-name matching can be risky.</li>
+                </ul>
+              </div>
+              <aside class="outcome">
+                <h4>Result</h4>
+                <div class="result">CivicFix could retrieve real road-jurisdiction information from NJ GIS instead of asking the AI to guess.</div>
+                <div class="next"><span>Next step</span><p>Move the proven API logic into the real Strands tool and handle ambiguous matches more safely.</p></div>
+              </aside>
+            </div>
+          </article>
+
+          <article class="panel entry" id="d0921">
+            <div class="entry-top">
+              <div class="date-block">
+                <div class="date">September 21, 2026</div>
+                <div class="time">Time worked · 1.75h</div>
+              </div>
+              <div class="entry-title">
+                <h3>Real tool integration + mobile/location redesign</h3>
+                <div class="summary">Connected the live GIS lookup to the agent, found the road-name ambiguity problem, and redesigned the MVP around map coordinates and evidence.</div>
+              </div>
+            </div>
+            <div class="entry-body">
+              <div>
+                <p>
+                  The working API request was moved into <code>road_tools.py</code>. A dynamic f-string bug was diagnosed and fixed, after which the tool correctly returned state, county, and municipal results.
+                  The Jurisdiction Agent was reconnected to the real tool. Testing then revealed a more fundamental design issue: a road-name search can return multiple matching segments and blindly selecting the first match is not reliable enough.
+                </p>
+                <ul>
+                  <li>Replaced the practice road dictionary with the real NJ GIS API call.</li>
+                  <li>Added safe handling for empty <code>features</code> results and an <code>unknown</code> fallback.</li>
+                  <li>Fixed <code>(road_name)</code> to <code>{road_name}</code> inside the f-string query.</li>
+                  <li>Verified State Highway 33 → state, English Creek Road → county, and Hunter Avenue → municipal.</li>
+                  <li>Reconnected the Jurisdiction Agent to the real lookup tool.</li>
+                  <li>Identified that coordinate-based lookup is safer than first-match road-name lookup.</li>
+                  <li>Redesigned the planned app around an interactive map, current-location button, and manual pin placement.</li>
+                  <li>Defined evidence capture: close-up photo, surrounding/context photo, and optional video.</li>
+                  <li>Set the one-month goal as a working Mercer County prototype.</li>
+                </ul>
+              </div>
+              <aside class="outcome">
+                <h4>Result</h4>
+                <div class="result">The project moved from a road-name demo to a clearer mobile MVP: location + evidence + AI + GIS + structured report.</div>
+                <div class="next"><span>Next step</span><p>Build latitude/longitude → exact road segment → jurisdiction, then connect that to the mobile map UI.</p></div>
+              </aside>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="milestones">
+      <div class="section-head">
+        <div>
+          <h2>Milestones</h2>
+          <p>Major pieces of the Mercer County prototype, shown without artificial percentage scoring.</p>
+        </div>
+      </div>
+      <div class="milestone-grid">
+        <div class="panel milestone"><div class="num">01</div><h3>Strands / AWS foundation</h3><p>Python environment, Strands SDK, AWS CLI, IAM, and Bedrock access.</p><span class="status complete">Complete</span></div>
+        <div class="panel milestone"><div class="num">02</div><h3>Intake Agent</h3><p>Classifies the resident’s non-emergency civic issue into a structured category.</p><span class="status complete">Complete</span></div>
+        <div class="panel milestone"><div class="num">03</div><h3>Jurisdiction Agent</h3><p>Uses a tool rather than model memory to obtain road-maintenance responsibility.</p><span class="status complete">Complete</span></div>
+        <div class="panel milestone"><div class="num">04</div><h3>NJ GIS integration</h3><p>Queries real ArcGIS road data and translates S/C/M jurisdiction codes.</p><span class="status complete">Complete</span></div>
+        <div class="panel milestone"><div class="num">05</div><h3>Coordinate road lookup</h3><p>Replace ambiguous road-name matching with a location-based road-segment query.</p><span class="status progress">In progress</span></div>
+        <div class="panel milestone"><div class="num">06</div><h3>Mobile map</h3><p>Current-location button plus manual pin selection for problems reported later.</p><span class="status planned">Planned next</span></div>
+        <div class="panel milestone"><div class="num">07</div><h3>Photo/video evidence</h3><p>Close-up, context photo, and optional video evidence attached to the report.</p><span class="status planned">Planned</span></div>
+        <div class="panel milestone"><div class="num">08</div><h3>Structured report</h3><p>Combine location, issue classification, evidence, and jurisdiction into a reviewable report.</p><span class="status planned">Planned</span></div>
+        <div class="panel milestone"><div class="num">09</div><h3>Government connectors</h3><p>Route or submit through supported agency systems where a reliable integration exists.</p><span class="status planned">Future</span></div>
+      </div>
+    </section>
+
+    <section class="section" id="architecture">
+      <div class="section-head">
+        <div>
+          <h2>Prototype architecture</h2>
+          <p>The intended end-to-end flow for the Mercer County version of CivicFix.</p>
+        </div>
+      </div>
+      <div class="panel architecture">
+        <div class="flow">
+          <div class="flow-card"><div class="step">01 · Locate</div><strong>Map + GPS</strong><p>Use current location or manually place a pin if the user already left the area.</p></div>
+          <div class="flow-card"><div class="step">02 · Document</div><strong>Text + evidence</strong><p>Description, close-up photo, surrounding photo, and optional video.</p></div>
+          <div class="flow-card"><div class="step">03 · Understand</div><strong>AI analysis</strong><p>Classify the civic issue and check whether the evidence provides useful context.</p></div>
+          <div class="flow-card"><div class="step">04 · Route</div><strong>NJ GIS</strong><p>Use coordinates to identify the actual road segment and responsible jurisdiction.</p></div>
+          <div class="flow-card"><div class="step">05 · Prepare</div><strong>Structured report</strong><p>Present the resident with a clear reviewable report and appropriate routing destination.</p></div>
+        </div>
+        <div class="scope-note">
+          Prototype boundary: Mercer County. Government submission and tracking are later integrations; the current project does not assume that every agency exposes a usable API.
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div><strong>CivicFix</strong> · Development record</div>
+      <div>Last documented workday: September 21, 2026</div>
+    </footer>
+  </main>
+</div>
+</body>
+</html>
